@@ -1,3 +1,3 @@
 # ansible
 
-日常使用playbook脚本
+日常使用playbook
