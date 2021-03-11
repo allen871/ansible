@@ -1,0 +1,22 @@
+---
+# tasks file for common
+- name: 创建相关文件夹
+  file: path={{ item }} state=directory
+  with_items:
+    - /data/app
+    - /data/srv
+    - /data/src
+
+- name: 添加epel源
+  copy: src=files/epel.repo dest=/etc/yum.repos.d owner=root mode=0644
+
+- name: yum安装基本软件
+  yum: name={{ item }} state=installed
+  with_items:
+    - vim
+    - gcc
+    - gcc-c++
+    - ntpdate
+
+- name: 每4小时同步一次时间
+  cron: minute=00 hour=*/4 user=root job='/usr/sbin/ntpdate 1.asia.pool.ntp.org && /usr/sbin/hwclock -w'

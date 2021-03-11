@@ -1,0 +1,53 @@
+---
+# tasks file for mysql
+
+- name: install yum packages
+  yum: name={{ item }} state=installed
+  with_items:
+    - libaio
+    - perl
+- name: Create Group
+  group: gid=521 name=mysql state=present system=yes
+
+- name: Create User
+  user: uid=521 name=mysql group=mysql system=yes createhome=no shell=/sbin/nologin state=present
+
+- name: Create Director if it does not exist
+  file: path=/data/srv state=directory mode=0755
+
+- name: 删除系统自带my.cnf配置文件
+  file: path=/etc/my.cnf state=absent
+
+- name: 拷贝mysql安装包
+  copy: src={{ item }} dest=/data/srv
+  with_items:
+    - mysql-5.6.23-linux-glibc2.5-x86_64.tar.gz
+
+- name: 解压mysql安装包
+  command: chdir=/data/srv tar -zxf mysql-5.6.23-linux-glibc2.5-x86_64.tar.gz -C /data/app
+
+# - name: 设置mysql目录权限
+#   file: path=/data/app/mysql-5.6.23-linux-glibc2.5-x86_64 state=directory owner=mysql group=mysql recurse=yes
+
+- name: 创建mysql目录软链接
+  file: src=/data/app/mysql-5.6.23-linux-glibc2.5-x86_64 path=/usr/local/mysql state=link
+
+- name: MySQL初始化
+  command: chdir=/usr/local/mysql {{ item }}
+  with_items:
+    - chown -R mysql.mysql .
+    - cp support-files/my-default.cnf /etc/my.cnf
+    - scripts/mysql_install_db --user=mysql
+    - chown -R root .
+    - chown -R mysql data
+    - cp support-files/mysql.server /etc/init.d/mysql
+
+- name: 配置MySQL环境变量
+  action: template src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - {src: 'mysql.sh',dest: '/etc/profile.d/mysql.sh'}
+    - {src: 'mysql.conf',dest: '/etc/ld.so.conf.d/mysql.conf'}
+
+- name: 添加mysql到系统服务
+  shell: chkconfig --add mysql
+  notify: started mysql

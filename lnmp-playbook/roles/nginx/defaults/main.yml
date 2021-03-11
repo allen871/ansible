@@ -1,0 +1,22 @@
+---
+# defaults file for nginx
+
+
+source_dir: /data/src
+nginx_source_dir: /data/src/nginx-1.8.0
+nginx_package_name: nginx-1.8.0.tar.gz
+
+install_dir: /data/app/nginx
+
+nginx_group: www-data
+nginx_group_id: 520
+nginx_user: www-data
+nginx_user_id: 520
+nginx_configure_command: >
+  ./configure
+  --prefix={{ install_dir }}
+  --user={{ nginx_user }}
+  --group={{ nginx_group }}
+  --with-http_realip_module
+  --with-http_stub_status_module
+  --with-http_ssl_module

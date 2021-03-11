@@ -1,0 +1,35 @@
+---
+# defaults file for php
+
+
+# 源码安装php
+
+
+source_dir: /data/src
+php_source_dir: /data/src/php-5.5.23
+php_source_filename: php-5.5.23.tar.gz
+php_install_path: /data/app/php5.5
+php_source_configure_command: >
+  ./configure
+  --prefix={{ php_install_path }}
+  --with-mysql
+  --with-pdo-mysql
+  --with-mysqli
+  --with-gd
+  --with-zlib
+  --with-openssl
+  --with-curl
+  --with-jpeg-dir
+  --with-png-dir
+  --with-freetype-dir
+  --with-libxml-dir
+  --with-mcrypt
+  --enable-bcmath
+  --enable-fpm
+  --enable-mbstring
+  --enable-ftp
+  --enable-sockets
+  --enable-zip
+  --enable-opcache
+  --enable-intl
+  --with-gettext

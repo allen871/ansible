@@ -1,0 +1,43 @@
+---
+# tasks file for php
+- name: install yum packages 
+  yum: name={{ item }} state=installed 
+  with_items: 
+    - zlib-devel 
+    - pcre-devel 
+    - libxml2-devel 
+    - openssl-devel 
+    - libcurl-devel 
+    - libjpeg-turbo-devel 
+    - libpng-devel 
+    - freetype-devel 
+    - libmcrypt-devel
+    - libicu
+    - libicu-devel 
+
+- name: 拷贝php源码包
+  copy: src={{ php_source_filename }} dest={{ source_dir }}
+
+- name: 解压 php源码包
+  unarchive: src={{ source_dir }}/{{ php_source_filename }} dest={{ source_dir }} copy=no
+
+- name: 安装php
+  command: chdir={{ php_source_dir }} {{ item }}
+  with_items:
+    - "{{ php_source_configure_command }}"
+    - make
+    - make install
+    - cp sapi/fpm/php-fpm /usr/local/bin/php-fpm
+    - cp php.ini-production {{ php_install_path }}/lib/php.ini
+    - cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+
+- name: 拷贝php-fpm配置文件
+  template: src=php-fpm.conf dest={{ php_install_path }}/etc/php-fpm.conf owner=root group=root mode=0644
+
+- name: 修改php-fpm权限
+  file: path=/etc/init.d/php-fpm mode=0755
+
+- name: 添加php-fpm到系统服务
+  shell: chkconfig --add php-fpm
+  notify: restart php-fpm 
+      

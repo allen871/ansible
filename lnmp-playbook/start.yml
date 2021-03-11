@@ -1,0 +1,10 @@
+---
+
+- name: Ansible Test
+  hosts: test
+  user: root
+  roles:
+    - common
+    - nginx
+    - php
+    - mysql

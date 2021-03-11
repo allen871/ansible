@@ -1,0 +1,42 @@
+---
+# tasks file for nginx
+- name: 创建用户组
+  group: gid={{ nginx_group_id }} name={{ nginx_group }} state=present system=yes 
+
+- name: 创建用户
+  user: uid={{ nginx_user_id }} name={{ nginx_user }} group={{ nginx_group }} createhome=no system=yes shell=/sbin/nologin state=present
+
+- name: yum安装依赖包
+  yum: name={{ item }} state=installed
+  with_items:
+    - pcre-devel
+    - zlib-devel
+    - openssl-devel
+
+- name: 拷贝源码包
+  copy: src={{ nginx_package_name }} dest={{ source_dir }}
+
+- name: 解压源码包
+  unarchive: src={{ source_dir }}/{{ nginx_package_name }} dest={{ source_dir }} copy=no
+
+- name: 安装源码包
+  command: chdir={{ nginx_source_dir }} {{ item }}
+  with_items:
+    - "{{ nginx_configure_command }}"
+    - make
+    - make install
+
+- name: 创建nginx配置文件夹 
+  file: path={{ install_dir }}/conf/vhost state=directory mode=0755
+
+- name: 拷贝nginx配置文件     
+  template: src=nginx.conf.j2 dest={{ install_dir }}/conf/nginx.conf owner=root group=root mode=0644
+
+- name: 拷贝nginx配置文件default     
+  template: src=www.conf.j2 dest={{ install_dir }}/conf/vhost/www.conf.default owner=root group=root mode=0644
+
+- name: 拷贝nginx init 配置文件     
+  template: src=init.d.nginx.j2 dest=/etc/init.d/nginx owner=root group=root mode=0755
+- name: 添加nginx到系统服务
+  shell: chkconfig --add nginx
+  notify: restart nginx
