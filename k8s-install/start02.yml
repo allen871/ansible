@@ -1,0 +1,10 @@
+---
+
+- name: k8s-install
+  hosts: all
+  user: root
+  roles:
+    - ipvs
+    - docker
+    - k8s
+    - reboot

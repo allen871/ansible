@@ -1,0 +1,6 @@
+---
+- name: k8s-install
+  hosts: node
+  user: root
+  roles:
+    - node

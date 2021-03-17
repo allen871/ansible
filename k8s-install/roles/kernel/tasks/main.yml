@@ -1,0 +1,33 @@
+---
+# tasks file for kernel
+- name: 创建挂载目录
+  file:
+    path: /data/soft/kernel
+    state: directory
+    mode: 0755
+- name: 拷贝内核安装包
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { src: 'kernel-lt-5.4.100-1.el7.elrepo.x86_64.rpm', dest: '/data/soft/kernel/kernel-lt-5.4.100-1.el7.elrepo.x86_64.rpm' }
+    - { src: 'kernel-lt-tools-5.4.100-1.el7.elrepo.x86_64.rpm', dest: '/data/soft/kernel/kernel-lt-tools-5.4.100-1.el7.elrepo.x86_64.rpm' }
+    - { src: 'kernel-lt-tools-libs-5.4.100-1.el7.elrepo.x86_64.rpm', dest: '/data/soft/kernel/kernel-lt-tools-libs-5.4.100-1.el7.elrepo.x86_64.rpm' }
+- name: 安装内核kernel-lt
+  yum:
+    name: /data/soft/kernel/kernel-lt-5.4.100-1.el7.elrepo.x86_64.rpm
+    state: present
+- name: 删除旧版内核kernel-tools
+  yum:
+    name:
+      - kernel-tools-libs.x86_64
+      - kernel-tools.x86_64
+    state: absent
+- name: 安装新版内核kernel-tools
+  yum:
+    name:
+      - /data/soft/kernel/kernel-lt-tools-5.4.100-1.el7.elrepo.x86_64.rpm
+      - /data/soft/kernel/kernel-lt-tools-libs-5.4.100-1.el7.elrepo.x86_64.rpm
+    state: present
+- name: 设置开机使用新内核
+  command: grub2-set-default 0

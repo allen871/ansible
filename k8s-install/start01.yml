@@ -1,0 +1,9 @@
+---
+
+- name: k8s-install
+  hosts: all
+  user: root
+  roles:
+    - common
+    - kernel
+    - reboot
