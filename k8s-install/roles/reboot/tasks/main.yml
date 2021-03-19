@@ -1,4 +1,0 @@
----
-# tasks file for reboot
-- name: 重启服务器
-  shell: reboot

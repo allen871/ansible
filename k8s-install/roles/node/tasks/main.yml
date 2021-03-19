@@ -1,6 +1,0 @@
----
-# tasks file for node
-- name: 配置域名指向apiserver负载均衡地址,如果是单master，则域名指向master地址
-  raw: "echo 192.168.6.1 k8sapi >> /etc/hosts"
-- name: 加入master集群,超过24小时需要重新查看token
-  command: kubeadm join k8sapi:6443 --token abcdef.0123456789abcdef --discovery-token-ca-cert-hash sha256:7502226d14584711f0c9df8a2d84912fa51a24c93815e02005cfd2c416a264e0

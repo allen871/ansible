@@ -1,7 +1,0 @@
-[master]
-192.168.6.1 hostname=master01 ansible_ssh_user='root' ansible_ssh_pass=''
-192.168.6.2 hostname=master02 ansible_ssh_user='root' ansible_ssh_pass=''
-192.168.6.3 hostname=master03 ansible_ssh_user='root' ansible_ssh_pass=''
-[node]
-192.168.6.4 hostname=node01 ansible_ssh_user='root' ansible_ssh_pass=''
-192.168.6.5 hostname=node02 ansible_ssh_user='root' ansible_ssh_pass=''
